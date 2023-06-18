@@ -52,7 +52,8 @@ class Orbe:
     def desenhar(self, janela, escala):
         x = self.x * escala + LARGURA_TELA / 2
         y = self.y * escala + ALTURA_TELA / 2
-        pygame.draw.circle(janela, self.cor, (x,y), self.raio)
+        if x >= 0 and y >=0:
+            pygame.draw.circle(janela, self.cor, (x,y), self.raio)
 
 def main():
     fator_escala = 250
