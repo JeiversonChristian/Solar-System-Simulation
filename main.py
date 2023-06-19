@@ -55,6 +55,46 @@ class Orbe:
         if x >= 0 and y >=0:
             pygame.draw.circle(janela, self.cor, (x,y), self.raio)
 
+    def calc_atracao(self, outro_orbe):
+        outro_x = outro_orbe.x
+        outro_y = outro_orbe.y
+        dist_x = self.x - outro_x
+        dist_y = self.y - outro_y
+        # Distância entre dois pontos no Plano Cartesiano
+        dist = (dist_x**2 + dist_y**2)**(1/2)
+        if outro_orbe.eh_sol == True:
+            self.dist_sol = dist
+        # Força de atração: F = GMm/d²
+        F = G * self.massa * outro_orbe.massa / dist ** 2
+        # Ângulo entre a distância dos orbes e o eixo X
+        # ArcoTangente de (y/x)
+        ang_theta = math.atan2(dist_y, dist_x)
+        # Componentes X e Y da Força
+        Fx = math.cos(ang_theta) * F
+        Fy = math.sin(ang_theta) * F
+        return Fx, Fy
+    
+    def atualizar_posicao(self, orbes):
+        total_Fx = 0
+        total_Fy = 0
+        for orbe in orbes:
+            # Não queremso calcular a força de atração consigo mesmo, pois dá uma divisão por zero
+            if self == orbe:
+                continue
+            Fx, Fy = self.calc_atracao(orbe)
+            total_Fx += Fx
+            total_Fy += Fy
+        # F = ma
+        # -> a = F/m
+        # v = at
+        # -> v = (F/m)t 
+        self.x_vel += (total_Fx / self.massa) * PASSAGEM_TEMPO
+        self.y_vel += (total_Fy / self.massa) * PASSAGEM_TEMPO
+        # x = vt
+        self.x += self.x_vel * PASSAGEM_TEMPO
+        self.y += self.y_vel * PASSAGEM_TEMPO
+        self.orbita.append((self.x, self.y))
+
 def main():
     fator_escala = 250
     # 1UA = 100 pixels
