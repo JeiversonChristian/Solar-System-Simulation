@@ -58,14 +58,14 @@ class Orbe:
     def calc_atracao(self, outro_orbe):
         outro_x = outro_orbe.x
         outro_y = outro_orbe.y
-        dist_x = self.x - outro_x
-        dist_y = self.y - outro_y
+        dist_x = outro_x - self.x
+        dist_y = outro_y - self.y
         # Distância entre dois pontos no Plano Cartesiano
         dist = (dist_x**2 + dist_y**2)**(1/2)
         if outro_orbe.eh_sol == True:
             self.dist_sol = dist
         # Força de atração: F = GMm/d²
-        F = G * self.massa * outro_orbe.massa / dist ** 2
+        F = G * self.massa * outro_orbe.massa / dist**2
         # Ângulo entre a distância dos orbes e o eixo X
         # ArcoTangente de (y/x)
         ang_theta = math.atan2(dist_y, dist_x)
@@ -112,9 +112,16 @@ def main():
     sol.eh_sol = True
 
     mercurio = Orbe(0.387*UA, 0, raio_mercurio, COR_MERCURIO, 3.30 * 10**23)
+    mercurio.y_vel = -47.4 * 10**3
+
     venus = Orbe(0.723*UA, 0, raio_venus, COR_VENUS, 4.8685 * 10**24)
+    venus.y_vel = -35.02 * 10**3
+
     terra = Orbe(-1*UA, 0, raio_terra, COR_TERRA, 5.9722 * 10**24)
+    terra.y_vel = 29.783 * 10**3
+
     marte = Orbe(-1.524*UA, 0, raio_marte, COR_MARTE, 6.39 * 10**23)
+    marte.y_vel = 24.077 * 10**3
 
     orbes = [sol, mercurio, venus, terra, marte]
 
@@ -141,6 +148,7 @@ def main():
         JANELA.fill(COR_FUNDO_UNIVERSO)
 
         for orbe in orbes:
+            orbe.atualizar_posicao(orbes)
             orbe.desenhar(JANELA, escala)
 
         pygame.display.update()
